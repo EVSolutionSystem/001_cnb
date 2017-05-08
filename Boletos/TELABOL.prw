@@ -42,7 +42,7 @@ Private lChkBol := .T.
 Private lChkBor := .T.
 Private lChkCNB := .T.
 Private lMark   := .F.
-Private aVetor  := {} 
+Private aVetor  := {}
 Private cPerg   := "TELABOL"
 Private lChkVld := .F.
 
@@ -136,44 +136,64 @@ cLogoD   := GetSrvProfString("Startpath","") + "Logo"+alltrim(Mv_Par01)+".JPG"
 
 DEFINE MSDIALOG oDlg TITLE cTitulo FROM 0,0 To 570,1292 COLORS 0,16772829 PIXEL
 
-@002,010 CHECKBOX oChk    VAR lChk    Prompt "Marca/Desmarca"    SIZE 60,007 PIXEL Of oDlg On Click(aEval(aVetor,{|x| x[1] := lChk}),AtuPanel(oItens, oValores, aVetor, @nItens, @nValores),oLbx:Refresh())
-@002,120 Say StrZero(_Tipo,2)+" Via" Size 60,007 PIXEL Of oDlg FONT oFont1 COLORS 16711680, 16777215
-@010,010 LISTBOX oLbx VAR cVar FIELDS Header " ", "Prefixo", "N° Titulo", "Parcela", "Cod. Cliente", "Loja", "Nome Cliente", "Data Emissão", "Valor R$", "Vencimento", "Vencimento Real", "Tipo", "Portador", "Agencia", "Conta", "Bordero", "Nosso N° Sistema", "Nosso N° Backup", "Filial" SIZE 630,230 Of oDlg PIXEL ON dblClick(aVetor[oLbx:nAt,1] := (!aVetor[oLbx:nAt,1] ) ,, AtuPanel(oItens, oValores, aVetor, @nItens, @nValores),oLbx:Refresh())
+oFWLMain := FWLayer():New()
+oFWLMain:Init( oDlg, .T. )
+oFWLMain:AddLine("LineSup",075,.T.)
+oFWLMain:AddLine("LineInf",022,.T.)
+
+oFWLMain:AddCollumn( "ColSP01", 098, .T.,"LineSup" )
+oFWLMain:AddWindow( "ColSP01", "WinSP01", "Seleção Boletos", 100, .F., .F.,/*bAction*/,"LineSup",/*bGotFocus*/)
+oWinSP01 := oFWLMain:GetWinPanel('ColSP01','WinSP01',"LineSup" )
+
+oFWLMain:AddCollumn( "Col01", 030, .T.,"LineInf" )
+oFWLMain:AddCollumn( "Col02", 030, .T.,"LineInf" )
+oFWLMain:AddCollumn( "Col03", 038, .T.,"LineInf" )
+
+oFWLMain:AddWindow( "Col01", "Win01", "Logotpo Banco"      ,100, .F., .F.,/*bAction*/,"LineInf",/*bGotFocus*/)
+oFWLMain:AddWindow( "Col02", "Win02", "Total Selecionado"  ,100, .F., .F.,/*bAction*/,"LineInf",/*bGotFocus*/)
+oFWLMain:AddWindow( "Col03", "Win03", "Botões"  		   ,098, .F., .F.,/*bAction*/,"LineInf",/*bGotFocus*/)
+oWin1 := oFWLMain:GetWinPanel('Col01','Win01',"LineInf" )
+oWin2 := oFWLMain:GetWinPanel('Col02','Win02',"LineInf" )
+oWin3 := oFWLMain:GetWinPanel('Col03','Win03',"LineInf" )
+
+@001,010 CHECKBOX oChk    VAR lChk    Prompt "Marca/Desmarca"    SIZE 60,007 PIXEL Of oWinSP01 On Click(aEval(aVetor,{|x| x[1] := lChk}),AtuPanel(oItens, oValores, aVetor, @nItens, @nValores),oLbx:Refresh())
+@001,120 Say StrZero(_Tipo,2)+" Via" Size 60,007 PIXEL Of oWinSP01 FONT oFont1 COLORS 16711680, 16777215
+@009,010 LISTBOX oLbx VAR cVar FIELDS Header " ", "Prefixo", "N° Titulo", "Parcela", "Cod. Cliente", "Loja", "Nome Cliente", "Data Emissão", "Valor R$", "Vencimento", "Vencimento Real", "Tipo", "Portador", "Agencia", "Conta", "Bordero", "Nosso N° Sistema", "Nosso N° Backup", "Filial" SIZE 610,165 Of oWinSP01 PIXEL ON dblClick(aVetor[oLbx:nAt,1] := (!aVetor[oLbx:nAt,1] ) ,, AtuPanel(oItens, oValores, aVetor, @nItens, @nValores),oLbx:Refresh())
 
 oLbx:SetArray(aVetor)
 oLbx:bLine := {|| { Iif(aVetor[oLbx:nAt,1],oOk,oNo), aVetor[oLbx:nAt,2], aVetor[oLbx:nAt,3], aVetor[oLbx:nAt,4], aVetor[oLbx:nAt,5], aVetor[oLbx:nAt,6], aVetor[oLbx:nAt,7], aVetor[oLbx:nAt,8], aVetor[oLbx:nAt,9], aVetor[oLbx:nAt,10], aVetor[oLbx:nAt,11], aVetor[oLbx:nAt,12], aVetor[oLbx:nAt,13], aVetor[oLbx:nAt,14], aVetor[oLbx:nAt,15], aVetor[oLbx:nAt,16], aVetor[oLbx:nAt,17], aVetor[oLbx:nAt,18], aVetor[oLbx:nAt,19], aVetor[oLbx:nAt,20] }}
 
 // Apresenta banco selecionado
-@ 245,010 BITMAP oBitmap1 SIZE 078, 037 OF oDlg FILENAME cLogoD NOBORDER PIXEL
+@ 005,015 BITMAP oBitmap1 SIZE 078, 037 OF oWin1 FILENAME cLogoD NOBORDER PIXEL
 
 // Apresenta dados do banADMINco informado nos parametros
-@ 250,0100 SAY "Banco: 	 "   SIZE 025, 007 OF oDlg  COLORS 0, 16777215 PIXEL
-@ 259,0100 SAY "Agência: " 	 SIZE 025, 007 OF oDlg  COLORS 0, 16777215 PIXEL
-@ 268,0100 SAY "Conta: 	 "   SIZE 025, 007 OF oDlg  COLORS 0, 16777215 PIXEL
+@ 005,0105 SAY "Banco: 	 "   SIZE 025, 007 OF oWin1  COLORS 0, 16777215 PIXEL
+@ 014,0105 SAY "Agência: " 	 SIZE 025, 007 OF oWin1  COLORS 0, 16777215 PIXEL
+@ 023,0105 SAY "Conta: 	 "   SIZE 025, 007 OF oWin1  COLORS 0, 16777215 PIXEL
 
-@ 250,0130 SAY _cBanco	 SIZE 025, 007 OF oDlg  FONT oFont1 COLORS 16711680, 16777215 PIXEL
-@ 259,0130 SAY _cAgencia SIZE 025, 007 OF oDlg  FONT oFont1 COLORS 16711680, 16777215 PIXEL
-@ 268,0130 SAY _cConta	 SIZE 025, 007 OF FONT oFont1 COLORS 16711680, 16777215 PIXEL
+@ 005,0135 SAY _cBanco	 SIZE 025, 007 OF oWin1  FONT oFont1 COLORS 16711680, 16777215 PIXEL
+@ 014,0135 SAY _cAgencia SIZE 025, 007 OF oWin1  FONT oFont1 COLORS 16711680, 16777215 PIXEL
+@ 023,0135 SAY _cConta	 SIZE 025, 007 OF oWin1  FONT oFont1 COLORS 16711680, 16777215 PIXEL
 
 // Apresenta Quantidade e Valores selecionado
-@ 245,0175 GROUP oGroup1 TO 273, 350 PROMPT "Total Seleção" OF oDlg COLOR 0, 16777215 PIXEL   //400
-@ 259,0190 SAY "Iten(s): 	 "   SIZE 025, 007 OF oDlg  COLORS 0, 16777215 PIXEL
-@ 259,0250 SAY "Valor(es): 	 "   SIZE 025, 007 OF oDlg  COLORS 0, 16777215 PIXEL
-@ 259,0225 SAY oItens   PROMPT  nItens	    Picture "99999999"			 SIZE 025, 007 OF oDlg  FONT oFont1 COLORS 16711680, 16777215 PIXEL
-@ 259,0290 SAY oValores PROMPT  nValores	Picture "@E 999,999,999.99"  SIZE 040, 007 OF FONT oFont1 COLORS 16711680, 16777215 PIXEL
+//@ 245,0175 GROUP oGroup1 TO 273, 350 PROMPT "Total Seleção" OF oDlg COLOR 0, 16777215 PIXEL   //400
+@ 005,060 SAY "Iten(s): 	 "   SIZE 025, 007 OF oWin2  COLORS 0, 16777215 PIXEL
+@ 017,060 SAY "Valor(es): 	 "   SIZE 025, 007 OF oWin2  COLORS 0, 16777215 PIXEL
+@ 005,105 SAY oItens   PROMPT  nItens	Picture "@E 999999999999"	 SIZE 040, 007 OF oWin2  FONT oFont1 COLORS 16711680, 16777215 PIXEL
+@ 017,105 SAY oValores PROMPT  nValores	Picture "@E 999,999,999.99"  SIZE 040, 007 OF oWin2  FONT oFont1 COLORS 16711680, 16777215 PIXEL
 
-nColb := 30
-@243,360+nColb BUTTON oCanceTot PROMPT "Cancel.Bord" 	SIZE 050, 014 Font oDlg:oFont ACTION {Sob060(), Fa060Canc(), CanceTot(),AtuaTela("TMP1",@nItens, @nValores), SobPerg() } OF oDlg PIXEL
+nColb := 0
+@002,010+nColb BUTTON oCanceTot PROMPT "Cancel.Bord" 	SIZE 050, 014 Font oDlg:oFont ACTION {Sob060(), Fa060Canc(), CanceTot(),AtuaTela("TMP1",@nItens, @nValores), SobPerg() } OF oWin3 PIXEL
 //@243,410+nColb BUTTON oDesconto PROMPT "Desconto"   		SIZE 050, 014 Font oDlg:oFont ACTION {TelaAjuste('D',aVetor, oLbx:nAt), AtuaTela("TMP",@nItens, @nValores),	u_AbrirTela()}  OF oDlg PIXEL
 //@243,460+nColb BUTTON oACresc   PROMPT "Acréscimo"  SIZE 050, 014 Font oDlg:oFont ACTION {TelaAjuste('A',aVetor, oLbx:nAt),	u_AbrirTela()} OF oDlg PIXEL
-@243,410+nColb BUTTON oConsulta PROMPT "Consulta"   	SIZE 050, 014 Font oDlg:oFont ACTION VisuSE1()  OF oDlg PIXEL
-@243,460+nColb BUTTON oCancela PROMPT  "Sair"		  	SIZE 050, 014 Font oDlg:oFont ACTION oDlg:End() OF oDlg PIXEL
-@243,460+nColb BUTTON oAjusta   PROMPT "Ajustar" 	  	SIZE 050, 014 Font oDlg:oFont ACTION {if(_Tipo=1,MsgRun("Ajuste utilizado somente para 2º via.",,{|| Sleep(2000) }), TelaAjuste('J',aVetor, oLbx:nAt)), ,AtuaTela("TMP1",@nItens, @nValores)} OF oDlg PIXEL
+@002,060+nColb BUTTON oConsulta PROMPT "Consulta"   	SIZE 050, 014 Font oDlg:oFont ACTION VisuSE1()  OF oWin3 PIXEL
+@002,110+nColb BUTTON oCancela PROMPT  "Sair"		  	SIZE 050, 014 Font oDlg:oFont ACTION oDlg:End() OF oWin3 PIXEL
+@002,160+nColb BUTTON oAjusta   PROMPT "Ajustar" 	  	SIZE 050, 014 Font oDlg:oFont ACTION {if(_Tipo=1,MsgRun("Ajuste utilizado somente para 2º via.",,{|| Sleep(2000) }), TelaAjuste('J',aVetor, oLbx:nAt)), ,AtuaTela("TMP1",@nItens, @nValores)} OF oWin3 PIXEL
 
-@260,360+nColb BUTTON oConfirma PROMPT "Confirmar"  SIZE 050, 014 Font oDlg:oFont ACTION {ValidSel(),u_BOLETOS(aVetor,lChkBol,lChkBor),u_Abrirtela(), AtuaTela("TMP1",@nItens, @nValores)} Of oDlg PIXEL
-@260,410+nColb BUTTON oCancela PROMPT  "Abatimento" SIZE 050, 014 Font oDlg:oFont ACTION {TelaAjuste('B',aVetor, oLbx:nAt),AtuaTela("TMP1",@nItens, @nValores),	u_AbrirTela()} OF oDlg PIXEL
+@019,010+nColb BUTTON oConfirma PROMPT "Confirmar"  SIZE 050, 014 Font oDlg:oFont ACTION {ValidSel(),u_BOLETOS(aVetor,lChkBol,lChkBor),u_Abrirtela(), AtuaTela("TMP1",@nItens, @nValores)} Of oWin3 PIXEL
+@019,060+nColb BUTTON oCancela PROMPT  "Abatimento" SIZE 050, 014 Font oDlg:oFont ACTION {TelaAjuste('B',aVetor, oLbx:nAt),AtuaTela("TMP1",@nItens, @nValores),	u_AbrirTela()} OF oWin3 PIXEL
 //@260,460+nColb BUTTON oConsulta PROMPT "Consulta"   SIZE 050, 014 Font oDlg:oFont ACTION VisuSE1()  OF oDlg PIXEL
-@260,460+nColb BUTTON oCancela PROMPT  "Sair"		  SIZE 050, 014 Font oDlg:oFont ACTION oDlg:End() OF oDlg PIXEL
+@019,110+nColb BUTTON oCancela PROMPT  "Sair"		  SIZE 050, 014 Font oDlg:oFont ACTION oDlg:End() OF oWin3 PIXEL
 //@260,510+nColb BUTTON oAjusta   PROMPT "Ajustar" 	  	SIZE 050, 014 Font oDlg:oFont ACTION {if(_Tipo=1,MsgRun("Ajuste utilizado somente para 2º via.",,{|| Sleep(2000) }), TelaAjuste('J',aVetor, oLbx:nAt)), ,AtuaTela("TMP",@nItens, @nValores)} OF oDlg PIXEL
 
 oChk:cToolTip 		:= "Marca ou Desmarca todos os registros"
@@ -952,7 +972,7 @@ Return
 */
 Static Function ValidSel()
 Local nConta := 0
-Local lRET   := .T.  
+Local lRET   := .T.
 
 if !u_VldCNPJ()
 	Return
@@ -991,7 +1011,7 @@ Local _cCGC := GetSenha('totvs'+cFilAnt+'.xml')
 Local aArea := GetArea()
 Local lArq  := File(GetSrvProfString( 'STARTPATH', '' )+'evvalid.ev')
 Local nResp := if(!lArq,u_NNENV(),.F.)
-	
+
 	dbSelectArea( 'SM0' )   		// minha base 08255976000117
 	SM0->( dbSetOrder( 1 ) )
 	if SM0->( dbSeek( cEmpAnt+cFilAnt, .T. ) )
