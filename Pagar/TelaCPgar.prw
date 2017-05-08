@@ -42,7 +42,7 @@ Private oConteudo
 Private lChkVld := .F.
 
 
-Private cPerg    := "TELAPAG"
+Private cPerg       := "TELAPAG"
 
 Private _cBanco		:= ''
 Private _cAgencia	:= ''
@@ -126,7 +126,7 @@ EndIf
 
 cLogoD   := GetSrvProfString("Startpath","") + "Logo"+alltrim(Mv_Par01)+".JPG"
 
-DEFINE MSDIALOG oDlg TITLE cTitulo FROM 0,0 To 570,1292 COLORS 0,16772829 PIXEL
+DEFINE MSDIALOG oDlg TITLE cTitulo FROM 0,0 To 570,1292 COLORS 0,16772829 PIXEL  STYLE nOR( WS_VISIBLE, WS_POPUP )
 
 oFWLMain := FWLayer():New()
 oFWLMain:Init( oDlg, .T. )
